@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,10 +15,9 @@ import (
 )
 
 type ReminderService struct {
-	StorageHandler PersistenceStore
-	Mu             sync.Mutex
-	Reminders      []Reminder
-	Raft           *raft.Raft
+	Mu        sync.Mutex
+	Reminders []Reminder
+	Raft      *raft.Raft
 }
 
 type Reminder struct {
@@ -25,10 +27,24 @@ type Reminder struct {
 }
 
 func (r *ReminderService) Apply(l *raft.Log) interface{} {
-	r.Mu.Lock()
+	fmt.Println("Apply being called successfully!")
+	data := strings.Split(string(l.Data), "-")
+	completed, err := strconv.ParseBool(data[2])
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	newReminder := &Reminder{
+		Title:       data[0],
+		Description: data[1],
+		Completed:   completed,
+	}
+
 	fmt.Println("Getting called via Raft")
-	fmt.Println(l.Data)
-	r.Mu.Unlock()
+	r.Reminders = append(r.Reminders, *newReminder)
+
+	fmt.Printf("Adding %v\n", newReminder)
 	return nil
 }
 
@@ -48,39 +64,20 @@ var _ raft.FSM = &ReminderService{}
 // WriteReminder is responsible for appending a reminder
 // request to the persistence store for the current Event
 func (e *ReminderService) WriteReminder(context context.Context, req *proto.AddReminderRequest) (*proto.AddReminderResponse, error) {
-	e.Raft.Apply([]byte("tester"), time.Second)
-	// Take an incoming request and write it to the persistence store of Reminder instance
-	// Because this is modifying the state of our application, we need to go through RAFT to ensure the write
-	// was cross-replicated across all the nodes without any issues
-
-	// Construct a reminder from the incoming GRPC request
-	// newReminder := &cfg.Reminder{
-	// 	Title:       req.GetTitle(),
-	// 	Description: req.GetDescription(),
-	// 	Completed:   false,
-	// }
-
-	// err := e.StorageHandler.Store(newReminder)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
+	fmt.Println("The write reminder call has been sent to gRPC")
 	fmt.Println(e.Raft.LeaderWithID())
-	fmt.Println("This is a write reminder")
+	e.Raft.Apply([]byte(fmt.Sprintf("%s-%s-%t", req.GetTitle(), req.GetDescription(), req.GetCompleted())), time.Second)
+	fmt.Println("Applied via raft.. returning")
+	fmt.Println(e.Raft.LeaderWithID())
 	return &proto.AddReminderResponse{
 		CommitIndex: 400,
 	}, nil
 }
 
-// RetrieveLatestReminder is responsible for retrieving the most
-// recently appended reminder that was added to the reminder log
 func (e *ReminderService) RetrieveLatestReminder(context context.Context, req *proto.GetLatestReminderRequest) (*proto.GetLatestReminderResponse, error) {
 	fmt.Println("This is a retrieve latest reminder")
 	return nil, nil
 }
-
-// RetrieveAllReminders is responsible for retrieving all reminders
-// that are stored in the entire reminder list
 func (e *ReminderService) RetrieveAllReminders(context context.Context, req *proto.GetAllRemindersRequest) (*proto.GetAllRemindersResponse, error) {
 	fmt.Println("This is a retrieve all reminders")
 	return nil, nil

@@ -52,6 +52,7 @@ func main() {
 			fmt.Printf("%v", err)
 			os.Exit(1)
 		}
+
 		time.Sleep(10 * time.Second)
 		fmt.Println("Removing the server node 1!")
 		for {
@@ -75,6 +76,7 @@ func main() {
 			Description: "Desc",
 			Completed:   false,
 		}
+
 		ctx := context.Background()
 		resp, err := client.WriteReminder(ctx, wrr)
 		if err != nil {
@@ -96,7 +98,8 @@ func main() {
 	}
 
 	raftConfig := &config.RaftConfig{
-		BindAddr:           "127.0.0.1",
+		BindAddr: "127.0.0.1",
+
 		BindPort:           6000,
 		FiniteStateMachine: fsm,
 		NodeIdentifier:     "node_1",
@@ -110,7 +113,7 @@ func main() {
 	}
 
 	var opts []grpc.ServerOption
-	grpcServer, err := newGrpcServer(opts...)
+	grpcServer, err := newGrpcServer(r, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -132,14 +135,21 @@ func main() {
 
 	fmt.Println("This called")
 	r.AddVoter(raft.ServerID("node_2"), raft.ServerAddress("127.0.0.1:7000"), 0, 5*time.Second)
+
+	for i := 0; i < 20; i++ {
+		time.Sleep(1 * time.Second)
+	}
+
 	r.RemoveServer(raft.ServerID("node_1"), 0, 5*time.Second)
 	for {
 	}
 }
 
-func newGrpcServer(opts ...grpc.ServerOption) (*grpc.Server, error) {
+func newGrpcServer(r *raft.Raft, opts ...grpc.ServerOption) (*grpc.Server, error) {
 	gsrv := grpc.NewServer(opts...)
-	proto.RegisterReminderServiceServer(gsrv, &config.ReminderService{})
+	proto.RegisterReminderServiceServer(gsrv, &config.ReminderService{
+		Raft: r,
+	})
 	return gsrv, nil
 }
 
@@ -148,7 +158,7 @@ func logLeader(r *raft.Raft) {
 	for {
 		select {
 		case <-t.C:
-			fmt.Println(r.Leader())
+			fmt.Println(r.LeaderWithID())
 		}
 	}
 }

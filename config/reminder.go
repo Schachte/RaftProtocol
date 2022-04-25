@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"sync"
+	"time"
 
 	"github.com/hashicorp/raft"
 	"github.com/schachte/customraft/proto"
@@ -14,6 +15,7 @@ type ReminderService struct {
 	StorageHandler PersistenceStore
 	Mu             sync.Mutex
 	Reminders      []Reminder
+	Raft           *raft.Raft
 }
 
 type Reminder struct {
@@ -23,17 +25,20 @@ type Reminder struct {
 }
 
 func (r *ReminderService) Apply(l *raft.Log) interface{} {
-	fmt.Println("IGNORE THIS")
+	r.Mu.Lock()
+	fmt.Println("Getting called via Raft")
+	fmt.Println(l.Data)
+	r.Mu.Unlock()
 	return nil
 }
 
 func (r *ReminderService) Snapshot() (raft.FSMSnapshot, error) {
-	fmt.Println("IGNORE THIS")
+	fmt.Println("Snapshot Ignore")
 	return nil, nil
 }
 
 func (r *ReminderService) Restore(s io.ReadCloser) error {
-	fmt.Println("IGNORE THIS")
+	fmt.Println("Restore Ignore")
 	return nil
 }
 
@@ -43,6 +48,7 @@ var _ raft.FSM = &ReminderService{}
 // WriteReminder is responsible for appending a reminder
 // request to the persistence store for the current Event
 func (e *ReminderService) WriteReminder(context context.Context, req *proto.AddReminderRequest) (*proto.AddReminderResponse, error) {
+	e.Raft.Apply([]byte("tester"), time.Second)
 	// Take an incoming request and write it to the persistence store of Reminder instance
 	// Because this is modifying the state of our application, we need to go through RAFT to ensure the write
 	// was cross-replicated across all the nodes without any issues
@@ -59,6 +65,7 @@ func (e *ReminderService) WriteReminder(context context.Context, req *proto.AddR
 	// 	log.Fatal(err)
 	// }
 
+	fmt.Println(e.Raft.LeaderWithID())
 	fmt.Println("This is a write reminder")
 	return &proto.AddReminderResponse{
 		CommitIndex: 400,

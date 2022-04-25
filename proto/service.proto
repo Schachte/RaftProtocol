@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "github.com/schachte/customraft/proto";
+
+service ReminderService {
+	rpc WriteReminder(AddReminderRequest) returns (AddReminderResponse) {}
+	rpc RetrieveLatestReminder(GetLatestReminderRequest) returns (GetLatestReminderResponse) {}
+	rpc RetrieveAllReminders(GetAllRemindersRequest) returns (GetAllRemindersResponse) {}
+}
+
+/***************************
+REQUESTS
+***************************/
+message AddReminderRequest {
+	string title = 1;
+	string description = 2;
+	bool completed = 3;
+}
+message GetLatestReminderRequest {}
+message GetAllRemindersRequest {}
+
+/***************************
+RESPONSES
+***************************/
+message AddReminderResponse {
+	uint64 commit_index = 1;
+}
+
+message GetLatestReminderResponse {
+	uint64 read_at_index = 1;
+	string reminder = 2;
+}
+
+message GetAllRemindersResponse {
+	repeated string reminders = 1;
+}

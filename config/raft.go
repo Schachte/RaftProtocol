@@ -49,7 +49,7 @@ func SetupRaft(cfg *RaftConfig) (*raft.Raft, error) {
 		log.Fatal(err)
 	}
 
-	rs := &ReminderService{}
+	rs := &ReminderWrapper{}
 	r, err := raft.NewRaft(
 		raftConfig,
 		rs,

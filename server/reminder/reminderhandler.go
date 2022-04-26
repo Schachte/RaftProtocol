@@ -1,61 +1,34 @@
 package reminder
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
-	"time"
+	"net"
 
 	"github.com/hashicorp/raft"
 	"github.com/schachte/customraft/config"
-	"github.com/schachte/customraft/fsm"
+	"github.com/schachte/customraft/proto"
+	"google.golang.org/grpc"
 )
 
-type request struct {
-	Operation int
-	Value     config.Reminder
-}
+func New(httpConfig config.HttpConfig, r *raft.Raft) {
+	GRPC_PORT := httpConfig.BindPort + 10
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", httpConfig.BindAddr, GRPC_PORT))
+	fmt.Printf("Running grpc server on port %d", GRPC_PORT)
 
-type server struct {
-	Raft       *raft.Raft
-	Identifier string
-}
-
-func New(httpConfig config.HttpConfig, r *raft.Raft) *server {
-	return &server{
-		Raft:       r,
-		Identifier: httpConfig.NodeIdentifier,
-	}
-}
-
-func (s *server) RemoveHandler(w http.ResponseWriter, _ *http.Request) {
-	fmt.Fprintf(w, "Hello, there\n")
-}
-
-func (s *server) RetrieveHandler(w http.ResponseWriter, _ *http.Request) {
-	fmt.Fprintf(w, "Hello, there\n")
-}
-
-func (s *server) AddHandler(w http.ResponseWriter, r *http.Request) {
-	if s.Raft.State() != raft.Leader {
-		fmt.Fprintf(w, "Error, must be leader\n")
-		return
-	}
-
-	var incomingPayload request
-	json.NewDecoder(r.Body).Decode(&incomingPayload)
-	jsonPayload := &fsm.Command{
-		Value:     incomingPayload.Value,
-		Operation: fsm.ADD_REMINDER,
-	}
-
-	byteLoad, err := json.Marshal(jsonPayload)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to listen: %v", err)
 	}
-	fmt.Println("About to call RAFT")
-	s.Raft.Apply(byteLoad, time.Second*3)
-	fmt.Println("Called RAFT")
-	fmt.Fprintf(w, "Hello, there\n")
+
+	s := grpc.NewServer()
+	proto.RegisterReminderServiceServer(s, &config.RpcInterface{
+		Raft: r,
+	})
+
+	log.Println("Serving GRPC service...")
+	log.Println("Served!")
+	log.Printf("GRPC Server IP: %s\n", httpConfig.BindAddr)
+	log.Printf("GRPC Server Port: %d\n", GRPC_PORT)
+
+	s.Serve(lis)
 }

@@ -12,10 +12,7 @@ import (
 )
 
 func InitializeServer(httpConfig *config.HttpConfig, raft *raft.Raft) {
-	reminderHandler := re.New(*httpConfig, raft)
-	http.HandleFunc("/reminder/add", reminderHandler.AddHandler)
-	http.HandleFunc("/reminder/remove/:index", reminderHandler.RemoveHandler)
-	http.HandleFunc("/reminder/retrieve/:index", reminderHandler.RetrieveHandler)
+	go re.New(*httpConfig, raft)
 
 	raftHandler := ra.New(httpConfig, raft)
 	http.HandleFunc("/raft/add", raftHandler.JoinCluster)
@@ -23,5 +20,9 @@ func InitializeServer(httpConfig *config.HttpConfig, raft *raft.Raft) {
 	http.HandleFunc("/raft/stats", raftHandler.Stats)
 
 	log.Println("Listening...")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", httpConfig.BindAddr, httpConfig.BindPort), nil))
+	httpServerConfig := fmt.Sprintf("%s:%d", httpConfig.BindAddr, httpConfig.BindPort)
+	log.Printf("We are going to start the HTTP server on %s\n", httpServerConfig)
+	http.ListenAndServe(httpServerConfig, nil)
+	for {
+	}
 }

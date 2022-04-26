@@ -2,11 +2,10 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -20,10 +19,10 @@ type HttpConfig struct {
 	NodeIdentifier string
 }
 
-type ReminderService struct {
-	Mu        sync.Mutex
-	Reminders []Reminder
-	Raft      *raft.Raft
+type ReminderWrapper struct {
+	Mu              sync.Mutex
+	CurrentReminder Reminder
+	Command         string
 }
 
 type Reminder struct {
@@ -32,55 +31,69 @@ type Reminder struct {
 	Completed   bool
 }
 
-func (r *ReminderService) Apply(l *raft.Log) interface{} {
-	fmt.Println("Apply being called successfully!")
-	data := strings.Split(string(l.Data), "-")
-	completed, err := strconv.ParseBool(data[2])
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	newReminder := &Reminder{
-		Title:       data[0],
-		Description: data[1],
-		Completed:   completed,
-	}
-
-	fmt.Println("Getting called via Raft")
-	r.Reminders = append(r.Reminders, *newReminder)
-
-	fmt.Printf("Adding %v\n", newReminder)
-	return nil
+type RpcInterface struct {
+	Raft *raft.Raft
 }
 
-func (r *ReminderService) Snapshot() (raft.FSMSnapshot, error) {
+func (r *ReminderWrapper) Apply(l *raft.Log) interface{} {
+	r.Mu.Lock()
+	defer r.Mu.Unlock()
+	data := string(l.Data)
+	if data == "RETRIEVE" {
+		fmt.Println(r.CurrentReminder)
+		fmt.Printf("Retrieving %s\n", r.CurrentReminder.Title)
+		return r.CurrentReminder.Title
+	}
+	fmt.Println("Apply being called successfully!")
+	deserializedReminder := &proto.AddReminderRequest{}
+	json.Unmarshal(l.Data, &deserializedReminder)
+	r.CurrentReminder = Reminder{
+		Title:       deserializedReminder.Title,
+		Description: deserializedReminder.Description,
+		Completed:   deserializedReminder.Completed,
+	}
+	fmt.Printf("Current reminder is: %s\n", r.CurrentReminder.Title)
+	return r.CurrentReminder
+}
+
+func (r *ReminderWrapper) Snapshot() (raft.FSMSnapshot, error) {
 	fmt.Println("Snapshot Ignore")
 	return nil, nil
 }
 
-func (r *ReminderService) Restore(s io.ReadCloser) error {
+func (r *ReminderWrapper) Restore(s io.ReadCloser) error {
 	fmt.Println("Restore Ignore")
 	return nil
 }
 
-// WriteReminder is responsible for appending a reminder
-// request to the persistence store for the current Event
-func (e *ReminderService) WriteReminder(context context.Context, req *proto.AddReminderRequest) (*proto.AddReminderResponse, error) {
-	fmt.Println("The write reminder call has been sent to gRPC")
-	e.Raft.Apply([]byte(fmt.Sprintf("%s-%s-%t", req.GetTitle(), req.GetDescription(), req.GetCompleted())), time.Second)
-	fmt.Println("Applied via raft.. returning")
-	fmt.Println(e.Raft.LeaderWithID())
+func (e *RpcInterface) WriteReminder(context context.Context, req *proto.AddReminderRequest) (*proto.AddReminderResponse, error) {
+	serializedData, err := json.Marshal(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	applyFuture := e.Raft.Apply(serializedData, time.Second)
+	if err := applyFuture.Error(); err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Applied!")
 	return &proto.AddReminderResponse{
 		CommitIndex: 400,
 	}, nil
 }
 
-func (e *ReminderService) RetrieveLatestReminder(context context.Context, req *proto.GetLatestReminderRequest) (*proto.GetLatestReminderResponse, error) {
-	fmt.Println("This is a retrieve latest reminder")
-	return nil, nil
+func (e *RpcInterface) RetrieveLatestReminder(context context.Context, req *proto.GetLatestReminderRequest) (*proto.GetLatestReminderResponse, error) {
+	result := e.Raft.Apply([]byte("RETRIEVE"), time.Second)
+	if err := result.Error(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("The value returned is: %s\n", result.Response().(string))
+	return &proto.GetLatestReminderResponse{
+		ReadAtIndex: 0,
+		Reminder:    result.Response().(string),
+	}, nil
 }
-func (e *ReminderService) RetrieveAllReminders(context context.Context, req *proto.GetAllRemindersRequest) (*proto.GetAllRemindersResponse, error) {
+
+func (e *RpcInterface) RetrieveAllReminders(context context.Context, req *proto.GetAllRemindersRequest) (*proto.GetAllRemindersResponse, error) {
 	fmt.Println("This is a retrieve all reminders")
 	return nil, nil
 }

@@ -13,4 +13,5 @@ const (
 	COMMIT_LOCATION   = "commit-location"
 	STORE_LOCATION    = "store-location"
 	BASE_LOCATION     = "base-location"
+	ACTION            = "action"
 )

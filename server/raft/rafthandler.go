@@ -54,11 +54,6 @@ func (s *server) JoinCluster(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Configuration := s.Raft.GetConfiguration().Configuration()
-	for _, server := range Configuration.Servers {
-		fmt.Println(server.Suffrage)
-	}
-
 	handleRequest(w, r, func() ([]byte, error) {
 		payload := &response{
 			Message: fmt.Sprintf("Added new node to %s - %s @ %s.", s.Identifier, incomingPayload.NodeIdentifier, incomingPayload.FullAddress),

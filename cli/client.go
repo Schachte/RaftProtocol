@@ -1,106 +1,55 @@
-package cli
+package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
 	"log"
-	"net"
-	"os"
-	"path/filepath"
+	"time"
 
-	"github.com/dgraph-io/badger/v2"
-	"github.com/hashicorp/raft"
-	raftboltdb "github.com/hashicorp/raft-boltdb"
+	"github.com/schachte/customraft/config"
+	"github.com/schachte/customraft/proto"
+	"google.golang.org/grpc"
 )
 
-func InvokeClient() {
-	conf := config{
-		Server: configServer{
-			Port: v.GetInt(serverPort),
-		},
-		Raft: configRaft{
-			NodeId:    v.GetString(raftNodeId),
-			Port:      v.GetInt(raftPort),
-			VolumeDir: v.GetString(raftVolDir),
-		},
-	}
+var (
+	serviceBindPort = flag.Int(config.HTTP_PORT, 0, "The port that the HTTP server will listen on")
+	serviceBindAddr = flag.String(config.HTTP_ADDR, "localhost", "The IP address or loopback address of the HTTP server")
+	action          = flag.String(config.ACTION, "default-action", "Tells the GRPC server what to do")
+)
 
-	log.Printf("%+v\n", conf)
+func main() {
+	flag.Parse()
 
-	// Preparing badgerDB
-	badgerOpt := badger.DefaultOptions(conf.Raft.VolumeDir)
-	badgerDB, err := badger.Open(badgerOpt)
+	serverAddr := fmt.Sprintf("%s:%d", *serviceBindAddr, *serviceBindPort+10)
+	conn, err := grpc.Dial(serverAddr, grpc.WithInsecure())
+
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	defer conn.Close()
+	grpcClient := proto.NewReminderServiceClient(conn)
+	ctx := context.Background()
+	req := &proto.AddReminderRequest{
+		Title:       "TestTitle",
+		Description: "TestDescription",
+		Completed:   false,
+	}
+
+	req2 := &proto.GetLatestReminderRequest{}
+
+	switch *action {
+	case "ADD":
+		log.Println("Adding New Reminder...")
+		grpcClient.WriteReminder(ctx, req)
 		return
+	case "REMOVE":
+	case "RETRIEVE_VALUE":
+		grpcClient.RetrieveLatestReminder(ctx, req2)
+		time.Sleep(10 * time.Second)
 	}
-
-	defer func() {
-		if err := badgerDB.Close(); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "error close badgerDB: %s\n", err.Error())
-		}
-	}()
-
-	var raftBinAddr = fmt.Sprintf(":%d", conf.Raft.Port)
-
-	raftConf := raft.DefaultConfig()
-	raftConf.LocalID = raft.ServerID(conf.Raft.NodeId)
-	raftConf.SnapshotThreshold = 1024
-
-	fsmStore := fsm.NewBadger(badgerDB)
-
-	store, err := raftboltdb.NewBoltStore(filepath.Join(conf.Raft.VolumeDir, "raft.dataRepo"))
-	if err != nil {
-		log.Fatal(err)
-		return
+	fmt.Println("waiting... <cntrl + c> to exit")
+	for {
 	}
-
-	// Wrap the store in a LogCache to improve performance.
-	cacheStore, err := raft.NewLogCache(raftLogCacheSize, store)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	snapshotStore, err := raft.NewFileSnapshotStore(conf.Raft.VolumeDir, raftSnapShotRetain, os.Stdout)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	tcpAddr, err := net.ResolveTCPAddr("tcp", raftBinAddr)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	transport, err := raft.NewTCPTransport(raftBinAddr, tcpAddr, maxPool, tcpTimeout, os.Stdout)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	raftServer, err := raft.NewRaft(raftConf, fsmStore, cacheStore, store, snapshotStore, transport)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	// always start single server as a leader
-	configuration := raft.Configuration{
-		Servers: []raft.Server{
-			{
-				ID:      raft.ServerID(conf.Raft.NodeId),
-				Address: transport.LocalAddr(),
-			},
-		},
-	}
-
-	raftServer.BootstrapCluster(configuration)
-
-	srv := server.New(fmt.Sprintf(":%d", conf.Server.Port), badgerDB, raftServer)
-	if err := srv.Start(); err != nil {
-		log.Fatal(err)
-	}
-
-	return
 }

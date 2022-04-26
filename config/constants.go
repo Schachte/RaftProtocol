@@ -1,5 +1,11 @@
 package config
 
+type HttpConfig struct {
+	BindAddr       string
+	BindPort       int
+	NodeIdentifier string
+}
+
 const (
 	ADD_NODE          = "add-node"
 	REMOVE_NODE       = "remove-node"
@@ -14,4 +20,15 @@ const (
 	STORE_LOCATION    = "store-location"
 	BASE_LOCATION     = "base-location"
 	ACTION            = "action"
+	KEY               = "key"
+	VALUE             = "value"
+)
+
+type RpcCommand string
+
+const (
+	ADD_KEY        RpcCommand = RpcCommand("ADD")
+	UPDATE_KEY     RpcCommand = RpcCommand("UPDATE")
+	REMOVE_KEY     RpcCommand = RpcCommand("REMOVE")
+	RETRIEVE_VALUE RpcCommand = RpcCommand("RETRIEVE")
 )

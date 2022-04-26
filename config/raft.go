@@ -13,6 +13,11 @@ import (
 
 const RaftRPC = 1
 
+type RaftCommand struct {
+	Operation RpcCommand
+	Value     Entry
+}
+
 type RaftConfig struct {
 	Bootstrap          bool
 	NodeIdentifier     string
@@ -49,7 +54,9 @@ func SetupRaft(cfg *RaftConfig) (*raft.Raft, error) {
 		log.Fatal(err)
 	}
 
-	rs := &ReminderWrapper{}
+	rs := &FSM{
+		Entries: make(map[string]string),
+	}
 	r, err := raft.NewRaft(
 		raftConfig,
 		rs,

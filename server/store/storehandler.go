@@ -1,4 +1,4 @@
-package reminder
+package store
 
 import (
 	"fmt"
@@ -21,14 +21,8 @@ func New(httpConfig config.HttpConfig, r *raft.Raft) {
 	}
 
 	s := grpc.NewServer()
-	proto.RegisterReminderServiceServer(s, &config.RpcInterface{
+	proto.RegisterKeyValueServiceServer(s, &config.RpcInterface{
 		Raft: r,
 	})
-
-	log.Println("Serving GRPC service...")
-	log.Println("Served!")
-	log.Printf("GRPC Server IP: %s\n", httpConfig.BindAddr)
-	log.Printf("GRPC Server Port: %d\n", GRPC_PORT)
-
 	s.Serve(lis)
 }

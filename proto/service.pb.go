@@ -24,21 +24,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-//**************************
-//REQUESTS
-//*************************
-type AddReminderRequest struct {
+type AddEntryRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Title       string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Completed   bool   `protobuf:"varint,3,opt,name=completed,proto3" json:"completed,omitempty"`
+	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *AddReminderRequest) Reset() {
-	*x = AddReminderRequest{}
+func (x *AddEntryRequest) Reset() {
+	*x = AddEntryRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -46,13 +42,13 @@ func (x *AddReminderRequest) Reset() {
 	}
 }
 
-func (x *AddReminderRequest) String() string {
+func (x *AddEntryRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddReminderRequest) ProtoMessage() {}
+func (*AddEntryRequest) ProtoMessage() {}
 
-func (x *AddReminderRequest) ProtoReflect() protoreflect.Message {
+func (x *AddEntryRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -64,40 +60,36 @@ func (x *AddReminderRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddReminderRequest.ProtoReflect.Descriptor instead.
-func (*AddReminderRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use AddEntryRequest.ProtoReflect.Descriptor instead.
+func (*AddEntryRequest) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AddReminderRequest) GetTitle() string {
+func (x *AddEntryRequest) GetKey() string {
 	if x != nil {
-		return x.Title
+		return x.Key
 	}
 	return ""
 }
 
-func (x *AddReminderRequest) GetDescription() string {
+func (x *AddEntryRequest) GetValue() string {
 	if x != nil {
-		return x.Description
+		return x.Value
 	}
 	return ""
 }
 
-func (x *AddReminderRequest) GetCompleted() bool {
-	if x != nil {
-		return x.Completed
-	}
-	return false
-}
-
-type GetLatestReminderRequest struct {
+type SetValueRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *GetLatestReminderRequest) Reset() {
-	*x = GetLatestReminderRequest{}
+func (x *SetValueRequest) Reset() {
+	*x = SetValueRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -105,13 +97,13 @@ func (x *GetLatestReminderRequest) Reset() {
 	}
 }
 
-func (x *GetLatestReminderRequest) String() string {
+func (x *SetValueRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetLatestReminderRequest) ProtoMessage() {}
+func (*SetValueRequest) ProtoMessage() {}
 
-func (x *GetLatestReminderRequest) ProtoReflect() protoreflect.Message {
+func (x *SetValueRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -123,19 +115,35 @@ func (x *GetLatestReminderRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetLatestReminderRequest.ProtoReflect.Descriptor instead.
-func (*GetLatestReminderRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetValueRequest.ProtoReflect.Descriptor instead.
+func (*SetValueRequest) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{1}
 }
 
-type GetAllRemindersRequest struct {
+func (x *SetValueRequest) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *SetValueRequest) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+type GetValueRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 }
 
-func (x *GetAllRemindersRequest) Reset() {
-	*x = GetAllRemindersRequest{}
+func (x *GetValueRequest) Reset() {
+	*x = GetValueRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -143,13 +151,13 @@ func (x *GetAllRemindersRequest) Reset() {
 	}
 }
 
-func (x *GetAllRemindersRequest) String() string {
+func (x *GetValueRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetAllRemindersRequest) ProtoMessage() {}
+func (*GetValueRequest) ProtoMessage() {}
 
-func (x *GetAllRemindersRequest) ProtoReflect() protoreflect.Message {
+func (x *GetValueRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -161,24 +169,28 @@ func (x *GetAllRemindersRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAllRemindersRequest.ProtoReflect.Descriptor instead.
-func (*GetAllRemindersRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetValueRequest.ProtoReflect.Descriptor instead.
+func (*GetValueRequest) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{2}
 }
 
-//**************************
-//RESPONSES
-//*************************
-type AddReminderResponse struct {
+func (x *GetValueRequest) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+type DeleteKeyRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CommitIndex uint64 `protobuf:"varint,1,opt,name=commit_index,json=commitIndex,proto3" json:"commit_index,omitempty"`
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 }
 
-func (x *AddReminderResponse) Reset() {
-	*x = AddReminderResponse{}
+func (x *DeleteKeyRequest) Reset() {
+	*x = DeleteKeyRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -186,13 +198,13 @@ func (x *AddReminderResponse) Reset() {
 	}
 }
 
-func (x *AddReminderResponse) String() string {
+func (x *DeleteKeyRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddReminderResponse) ProtoMessage() {}
+func (*DeleteKeyRequest) ProtoMessage() {}
 
-func (x *AddReminderResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteKeyRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -204,29 +216,29 @@ func (x *AddReminderResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddReminderResponse.ProtoReflect.Descriptor instead.
-func (*AddReminderResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteKeyRequest.ProtoReflect.Descriptor instead.
+func (*DeleteKeyRequest) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *AddReminderResponse) GetCommitIndex() uint64 {
+func (x *DeleteKeyRequest) GetKey() string {
 	if x != nil {
-		return x.CommitIndex
+		return x.Key
 	}
-	return 0
+	return ""
 }
 
-type GetLatestReminderResponse struct {
+type KeyResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ReadAtIndex uint64 `protobuf:"varint,1,opt,name=read_at_index,json=readAtIndex,proto3" json:"read_at_index,omitempty"`
-	Reminder    string `protobuf:"bytes,2,opt,name=reminder,proto3" json:"reminder,omitempty"`
+	Key   string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value string `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
-func (x *GetLatestReminderResponse) Reset() {
-	*x = GetLatestReminderResponse{}
+func (x *KeyResponse) Reset() {
+	*x = KeyResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -234,13 +246,13 @@ func (x *GetLatestReminderResponse) Reset() {
 	}
 }
 
-func (x *GetLatestReminderResponse) String() string {
+func (x *KeyResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetLatestReminderResponse) ProtoMessage() {}
+func (*KeyResponse) ProtoMessage() {}
 
-func (x *GetLatestReminderResponse) ProtoReflect() protoreflect.Message {
+func (x *KeyResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -252,118 +264,61 @@ func (x *GetLatestReminderResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetLatestReminderResponse.ProtoReflect.Descriptor instead.
-func (*GetLatestReminderResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use KeyResponse.ProtoReflect.Descriptor instead.
+func (*KeyResponse) Descriptor() ([]byte, []int) {
 	return file_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetLatestReminderResponse) GetReadAtIndex() uint64 {
+func (x *KeyResponse) GetKey() string {
 	if x != nil {
-		return x.ReadAtIndex
-	}
-	return 0
-}
-
-func (x *GetLatestReminderResponse) GetReminder() string {
-	if x != nil {
-		return x.Reminder
+		return x.Key
 	}
 	return ""
 }
 
-type GetAllRemindersResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Reminders []string `protobuf:"bytes,1,rep,name=reminders,proto3" json:"reminders,omitempty"`
-}
-
-func (x *GetAllRemindersResponse) Reset() {
-	*x = GetAllRemindersResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_service_proto_msgTypes[5]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetAllRemindersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAllRemindersResponse) ProtoMessage() {}
-
-func (x *GetAllRemindersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_service_proto_msgTypes[5]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAllRemindersResponse.ProtoReflect.Descriptor instead.
-func (*GetAllRemindersResponse) Descriptor() ([]byte, []int) {
-	return file_service_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *GetAllRemindersResponse) GetReminders() []string {
+func (x *KeyResponse) GetValue() string {
 	if x != nil {
-		return x.Reminders
+		return x.Value
 	}
-	return nil
+	return ""
 }
 
 var File_service_proto protoreflect.FileDescriptor
 
 var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0x6a, 0x0a, 0x12, 0x41, 0x64, 0x64, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64,
-	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1c, 0x0a,
-	0x09, 0x63, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08,
-	0x52, 0x09, 0x63, 0x6f, 0x6d, 0x70, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x22, 0x1a, 0x0a, 0x18, 0x47,
-	0x65, 0x74, 0x4c, 0x61, 0x74, 0x65, 0x73, 0x74, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x18, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x41, 0x6c,
-	0x6c, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x22, 0x38, 0x0a, 0x13, 0x41, 0x64, 0x64, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x0c, 0x63, 0x6f, 0x6d, 0x6d,
-	0x69, 0x74, 0x5f, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0b,
-	0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x22, 0x5b, 0x0a, 0x19, 0x47,
-	0x65, 0x74, 0x4c, 0x61, 0x74, 0x65, 0x73, 0x74, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x22, 0x0a, 0x0d, 0x72, 0x65, 0x61, 0x64,
-	0x5f, 0x61, 0x74, 0x5f, 0x69, 0x6e, 0x64, 0x65, 0x78, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
-	0x0b, 0x72, 0x65, 0x61, 0x64, 0x41, 0x74, 0x49, 0x6e, 0x64, 0x65, 0x78, 0x12, 0x1a, 0x0a, 0x08,
-	0x72, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
-	0x72, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x22, 0x37, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x41,
-	0x6c, 0x6c, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x72, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73,
-	0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x09, 0x72, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72,
-	0x73, 0x32, 0xef, 0x01, 0x0a, 0x0f, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a, 0x0d, 0x57, 0x72, 0x69, 0x74, 0x65, 0x52, 0x65,
-	0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x13, 0x2e, 0x41, 0x64, 0x64, 0x52, 0x65, 0x6d, 0x69,
-	0x6e, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x41, 0x64,
-	0x64, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x12, 0x51, 0x0a, 0x16, 0x52, 0x65, 0x74, 0x72, 0x69, 0x65, 0x76, 0x65, 0x4c,
-	0x61, 0x74, 0x65, 0x73, 0x74, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x12, 0x19, 0x2e,
-	0x47, 0x65, 0x74, 0x4c, 0x61, 0x74, 0x65, 0x73, 0x74, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65,
-	0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x47, 0x65, 0x74, 0x4c, 0x61,
-	0x74, 0x65, 0x73, 0x74, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x4b, 0x0a, 0x14, 0x52, 0x65, 0x74, 0x72, 0x69, 0x65,
-	0x76, 0x65, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x12, 0x17,
-	0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x18, 0x2e, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c,
-	0x52, 0x65, 0x6d, 0x69, 0x6e, 0x64, 0x65, 0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x42, 0x26, 0x5a, 0x24, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x73, 0x63, 0x68, 0x61, 0x63, 0x68, 0x74, 0x65, 0x2f, 0x63, 0x75, 0x73, 0x74, 0x6f,
-	0x6d, 0x72, 0x61, 0x66, 0x74, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x39, 0x0a, 0x0f, 0x41, 0x64, 0x64, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x03, 0x6b, 0x65, 0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x39, 0x0a, 0x0f, 0x53, 0x65,
+	0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x10, 0x0a,
+	0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x12,
+	0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x76, 0x61, 0x6c, 0x75, 0x65, 0x22, 0x23, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79, 0x22, 0x24, 0x0a, 0x10, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x10,
+	0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65, 0x79,
+	0x22, 0x35, 0x0a, 0x0b, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x10, 0x0a, 0x03, 0x6b, 0x65, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x6b, 0x65,
+	0x79, 0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x32, 0xd0, 0x01, 0x0a, 0x0f, 0x4b, 0x65, 0x79, 0x56,
+	0x61, 0x6c, 0x75, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2c, 0x0a, 0x08, 0x41,
+	0x64, 0x64, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x2e, 0x41, 0x64, 0x64, 0x45, 0x6e, 0x74,
+	0x72, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x4b, 0x65, 0x79, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2f, 0x0a, 0x0b, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x2e, 0x53, 0x65, 0x74, 0x56, 0x61,
+	0x6c, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x4b, 0x65, 0x79,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x30, 0x0a, 0x0b, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x11, 0x2e, 0x44, 0x65, 0x6c, 0x65,
+	0x74, 0x65, 0x4b, 0x65, 0x79, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x4b,
+	0x65, 0x79, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2c, 0x0a, 0x08,
+	0x47, 0x65, 0x74, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x12, 0x10, 0x2e, 0x47, 0x65, 0x74, 0x56, 0x61,
+	0x6c, 0x75, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x4b, 0x65, 0x79,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x26, 0x5a, 0x24, 0x67, 0x69,
+	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x63, 0x68, 0x61, 0x63, 0x68, 0x74,
+	0x65, 0x2f, 0x63, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x72, 0x61, 0x66, 0x74, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -378,24 +333,25 @@ func file_service_proto_rawDescGZIP() []byte {
 	return file_service_proto_rawDescData
 }
 
-var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_service_proto_goTypes = []interface{}{
-	(*AddReminderRequest)(nil),        // 0: AddReminderRequest
-	(*GetLatestReminderRequest)(nil),  // 1: GetLatestReminderRequest
-	(*GetAllRemindersRequest)(nil),    // 2: GetAllRemindersRequest
-	(*AddReminderResponse)(nil),       // 3: AddReminderResponse
-	(*GetLatestReminderResponse)(nil), // 4: GetLatestReminderResponse
-	(*GetAllRemindersResponse)(nil),   // 5: GetAllRemindersResponse
+	(*AddEntryRequest)(nil),  // 0: AddEntryRequest
+	(*SetValueRequest)(nil),  // 1: SetValueRequest
+	(*GetValueRequest)(nil),  // 2: GetValueRequest
+	(*DeleteKeyRequest)(nil), // 3: DeleteKeyRequest
+	(*KeyResponse)(nil),      // 4: KeyResponse
 }
 var file_service_proto_depIdxs = []int32{
-	0, // 0: ReminderService.WriteReminder:input_type -> AddReminderRequest
-	1, // 1: ReminderService.RetrieveLatestReminder:input_type -> GetLatestReminderRequest
-	2, // 2: ReminderService.RetrieveAllReminders:input_type -> GetAllRemindersRequest
-	3, // 3: ReminderService.WriteReminder:output_type -> AddReminderResponse
-	4, // 4: ReminderService.RetrieveLatestReminder:output_type -> GetLatestReminderResponse
-	5, // 5: ReminderService.RetrieveAllReminders:output_type -> GetAllRemindersResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	0, // 0: KeyValueService.AddEntry:input_type -> AddEntryRequest
+	1, // 1: KeyValueService.UpdateEntry:input_type -> SetValueRequest
+	3, // 2: KeyValueService.DeleteEntry:input_type -> DeleteKeyRequest
+	2, // 3: KeyValueService.GetEntry:input_type -> GetValueRequest
+	4, // 4: KeyValueService.AddEntry:output_type -> KeyResponse
+	4, // 5: KeyValueService.UpdateEntry:output_type -> KeyResponse
+	4, // 6: KeyValueService.DeleteEntry:output_type -> KeyResponse
+	4, // 7: KeyValueService.GetEntry:output_type -> KeyResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -408,7 +364,7 @@ func file_service_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_service_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddReminderRequest); i {
+			switch v := v.(*AddEntryRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -420,7 +376,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetLatestReminderRequest); i {
+			switch v := v.(*SetValueRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -432,7 +388,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAllRemindersRequest); i {
+			switch v := v.(*GetValueRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -444,7 +400,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AddReminderResponse); i {
+			switch v := v.(*DeleteKeyRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -456,19 +412,7 @@ func file_service_proto_init() {
 			}
 		}
 		file_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetLatestReminderResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAllRemindersResponse); i {
+			switch v := v.(*KeyResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -486,7 +430,7 @@ func file_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -508,144 +452,180 @@ var _ grpc.ClientConnInterface
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
-// ReminderServiceClient is the client API for ReminderService service.
+// KeyValueServiceClient is the client API for KeyValueService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ReminderServiceClient interface {
-	WriteReminder(ctx context.Context, in *AddReminderRequest, opts ...grpc.CallOption) (*AddReminderResponse, error)
-	RetrieveLatestReminder(ctx context.Context, in *GetLatestReminderRequest, opts ...grpc.CallOption) (*GetLatestReminderResponse, error)
-	RetrieveAllReminders(ctx context.Context, in *GetAllRemindersRequest, opts ...grpc.CallOption) (*GetAllRemindersResponse, error)
+type KeyValueServiceClient interface {
+	AddEntry(ctx context.Context, in *AddEntryRequest, opts ...grpc.CallOption) (*KeyResponse, error)
+	UpdateEntry(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*KeyResponse, error)
+	DeleteEntry(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*KeyResponse, error)
+	GetEntry(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*KeyResponse, error)
 }
 
-type reminderServiceClient struct {
+type keyValueServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewReminderServiceClient(cc grpc.ClientConnInterface) ReminderServiceClient {
-	return &reminderServiceClient{cc}
+func NewKeyValueServiceClient(cc grpc.ClientConnInterface) KeyValueServiceClient {
+	return &keyValueServiceClient{cc}
 }
 
-func (c *reminderServiceClient) WriteReminder(ctx context.Context, in *AddReminderRequest, opts ...grpc.CallOption) (*AddReminderResponse, error) {
-	out := new(AddReminderResponse)
-	err := c.cc.Invoke(ctx, "/ReminderService/WriteReminder", in, out, opts...)
+func (c *keyValueServiceClient) AddEntry(ctx context.Context, in *AddEntryRequest, opts ...grpc.CallOption) (*KeyResponse, error) {
+	out := new(KeyResponse)
+	err := c.cc.Invoke(ctx, "/KeyValueService/AddEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *reminderServiceClient) RetrieveLatestReminder(ctx context.Context, in *GetLatestReminderRequest, opts ...grpc.CallOption) (*GetLatestReminderResponse, error) {
-	out := new(GetLatestReminderResponse)
-	err := c.cc.Invoke(ctx, "/ReminderService/RetrieveLatestReminder", in, out, opts...)
+func (c *keyValueServiceClient) UpdateEntry(ctx context.Context, in *SetValueRequest, opts ...grpc.CallOption) (*KeyResponse, error) {
+	out := new(KeyResponse)
+	err := c.cc.Invoke(ctx, "/KeyValueService/UpdateEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *reminderServiceClient) RetrieveAllReminders(ctx context.Context, in *GetAllRemindersRequest, opts ...grpc.CallOption) (*GetAllRemindersResponse, error) {
-	out := new(GetAllRemindersResponse)
-	err := c.cc.Invoke(ctx, "/ReminderService/RetrieveAllReminders", in, out, opts...)
+func (c *keyValueServiceClient) DeleteEntry(ctx context.Context, in *DeleteKeyRequest, opts ...grpc.CallOption) (*KeyResponse, error) {
+	out := new(KeyResponse)
+	err := c.cc.Invoke(ctx, "/KeyValueService/DeleteEntry", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ReminderServiceServer is the server API for ReminderService service.
-type ReminderServiceServer interface {
-	WriteReminder(context.Context, *AddReminderRequest) (*AddReminderResponse, error)
-	RetrieveLatestReminder(context.Context, *GetLatestReminderRequest) (*GetLatestReminderResponse, error)
-	RetrieveAllReminders(context.Context, *GetAllRemindersRequest) (*GetAllRemindersResponse, error)
+func (c *keyValueServiceClient) GetEntry(ctx context.Context, in *GetValueRequest, opts ...grpc.CallOption) (*KeyResponse, error) {
+	out := new(KeyResponse)
+	err := c.cc.Invoke(ctx, "/KeyValueService/GetEntry", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedReminderServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedReminderServiceServer struct {
+// KeyValueServiceServer is the server API for KeyValueService service.
+type KeyValueServiceServer interface {
+	AddEntry(context.Context, *AddEntryRequest) (*KeyResponse, error)
+	UpdateEntry(context.Context, *SetValueRequest) (*KeyResponse, error)
+	DeleteEntry(context.Context, *DeleteKeyRequest) (*KeyResponse, error)
+	GetEntry(context.Context, *GetValueRequest) (*KeyResponse, error)
 }
 
-func (*UnimplementedReminderServiceServer) WriteReminder(context.Context, *AddReminderRequest) (*AddReminderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method WriteReminder not implemented")
-}
-func (*UnimplementedReminderServiceServer) RetrieveLatestReminder(context.Context, *GetLatestReminderRequest) (*GetLatestReminderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RetrieveLatestReminder not implemented")
-}
-func (*UnimplementedReminderServiceServer) RetrieveAllReminders(context.Context, *GetAllRemindersRequest) (*GetAllRemindersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RetrieveAllReminders not implemented")
+// UnimplementedKeyValueServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedKeyValueServiceServer struct {
 }
 
-func RegisterReminderServiceServer(s *grpc.Server, srv ReminderServiceServer) {
-	s.RegisterService(&_ReminderService_serviceDesc, srv)
+func (*UnimplementedKeyValueServiceServer) AddEntry(context.Context, *AddEntryRequest) (*KeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddEntry not implemented")
+}
+func (*UnimplementedKeyValueServiceServer) UpdateEntry(context.Context, *SetValueRequest) (*KeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEntry not implemented")
+}
+func (*UnimplementedKeyValueServiceServer) DeleteEntry(context.Context, *DeleteKeyRequest) (*KeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntry not implemented")
+}
+func (*UnimplementedKeyValueServiceServer) GetEntry(context.Context, *GetValueRequest) (*KeyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEntry not implemented")
 }
 
-func _ReminderService_WriteReminder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddReminderRequest)
+func RegisterKeyValueServiceServer(s *grpc.Server, srv KeyValueServiceServer) {
+	s.RegisterService(&_KeyValueService_serviceDesc, srv)
+}
+
+func _KeyValueService_AddEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddEntryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReminderServiceServer).WriteReminder(ctx, in)
+		return srv.(KeyValueServiceServer).AddEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ReminderService/WriteReminder",
+		FullMethod: "/KeyValueService/AddEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReminderServiceServer).WriteReminder(ctx, req.(*AddReminderRequest))
+		return srv.(KeyValueServiceServer).AddEntry(ctx, req.(*AddEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReminderService_RetrieveLatestReminder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLatestReminderRequest)
+func _KeyValueService_UpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetValueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReminderServiceServer).RetrieveLatestReminder(ctx, in)
+		return srv.(KeyValueServiceServer).UpdateEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ReminderService/RetrieveLatestReminder",
+		FullMethod: "/KeyValueService/UpdateEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReminderServiceServer).RetrieveLatestReminder(ctx, req.(*GetLatestReminderRequest))
+		return srv.(KeyValueServiceServer).UpdateEntry(ctx, req.(*SetValueRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReminderService_RetrieveAllReminders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllRemindersRequest)
+func _KeyValueService_DeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReminderServiceServer).RetrieveAllReminders(ctx, in)
+		return srv.(KeyValueServiceServer).DeleteEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ReminderService/RetrieveAllReminders",
+		FullMethod: "/KeyValueService/DeleteEntry",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReminderServiceServer).RetrieveAllReminders(ctx, req.(*GetAllRemindersRequest))
+		return srv.(KeyValueServiceServer).DeleteEntry(ctx, req.(*DeleteKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ReminderService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "ReminderService",
-	HandlerType: (*ReminderServiceServer)(nil),
+func _KeyValueService_GetEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KeyValueServiceServer).GetEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/KeyValueService/GetEntry",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KeyValueServiceServer).GetEntry(ctx, req.(*GetValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _KeyValueService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "KeyValueService",
+	HandlerType: (*KeyValueServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "WriteReminder",
-			Handler:    _ReminderService_WriteReminder_Handler,
+			MethodName: "AddEntry",
+			Handler:    _KeyValueService_AddEntry_Handler,
 		},
 		{
-			MethodName: "RetrieveLatestReminder",
-			Handler:    _ReminderService_RetrieveLatestReminder_Handler,
+			MethodName: "UpdateEntry",
+			Handler:    _KeyValueService_UpdateEntry_Handler,
 		},
 		{
-			MethodName: "RetrieveAllReminders",
-			Handler:    _ReminderService_RetrieveAllReminders_Handler,
+			MethodName: "DeleteEntry",
+			Handler:    _KeyValueService_DeleteEntry_Handler,
+		},
+		{
+			MethodName: "GetEntry",
+			Handler:    _KeyValueService_GetEntry_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

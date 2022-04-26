@@ -14,6 +14,12 @@ import (
 	"github.com/schachte/customraft/proto"
 )
 
+type HttpConfig struct {
+	BindAddr       string
+	BindPort       int
+	NodeIdentifier string
+}
+
 type ReminderService struct {
 	Mu        sync.Mutex
 	Reminders []Reminder
@@ -58,14 +64,10 @@ func (r *ReminderService) Restore(s io.ReadCloser) error {
 	return nil
 }
 
-// Because we are treating the reminder service as the FSM for RAFT, we must implement the methods to make it polymorphic
-var _ raft.FSM = &ReminderService{}
-
 // WriteReminder is responsible for appending a reminder
 // request to the persistence store for the current Event
 func (e *ReminderService) WriteReminder(context context.Context, req *proto.AddReminderRequest) (*proto.AddReminderResponse, error) {
 	fmt.Println("The write reminder call has been sent to gRPC")
-	fmt.Println(e.Raft.LeaderWithID())
 	e.Raft.Apply([]byte(fmt.Sprintf("%s-%s-%t", req.GetTitle(), req.GetDescription(), req.GetCompleted())), time.Second)
 	fmt.Println("Applied via raft.. returning")
 	fmt.Println(e.Raft.LeaderWithID())

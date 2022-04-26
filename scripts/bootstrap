@@ -1,0 +1,11 @@
+#!/bin/bash
+
+rm -rf /tmp/raft/node* && mkdir /tmp/raft/{node_1,node_2,node_3,node_4,node_5}
+echo "Bootstrapping the cluster"
+go run ../main.go \
+-identifier node_1 \
+-http-addr 127.0.0.1 \
+-http-port 4000 \
+-raft-addr 127.0.0.1 \
+-raft-port 5000 \
+-bootstrap

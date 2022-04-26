@@ -1,0 +1,6 @@
+go run ../main.go \
+-identifier node_3 \
+-http-addr 127.0.0.1 \
+-http-port 4200 \
+-raft-addr 127.0.0.1 \
+-raft-port 5200

@@ -14,6 +14,7 @@ import (
 const RaftRPC = 1
 
 type RaftConfig struct {
+	Bootstrap          bool
 	NodeIdentifier     string
 	StorageLocation    string
 	BindAddr           string
@@ -21,9 +22,10 @@ type RaftConfig struct {
 	FiniteStateMachine raft.FSM
 }
 
-func SetupRaft(cfg *RaftConfig, bootstrapEnabled bool) (*raft.Raft, error) {
+func SetupRaft(cfg *RaftConfig) (*raft.Raft, error) {
 	raftConfig := raft.DefaultConfig()
 	raftConfig.LocalID = raft.ServerID(cfg.NodeIdentifier)
+
 	baseDir := filepath.Join(cfg.StorageLocation, cfg.NodeIdentifier)
 
 	logStore, err := boltdb.NewBoltStore(filepath.Join(baseDir, "logs.dat"))
@@ -31,9 +33,10 @@ func SetupRaft(cfg *RaftConfig, bootstrapEnabled bool) (*raft.Raft, error) {
 		return nil, fmt.Errorf(`boltdb.NewBoltStore(%q): %v`, filepath.Join(baseDir, "logs.dat"), err)
 	}
 
-	stableStore, err := boltdb.NewBoltStore(filepath.Join(baseDir, "stable.dat"))
+	stablePath := filepath.Join(baseDir, "stable.dat")
+	stableStore, err := boltdb.NewBoltStore(stablePath)
 	if err != nil {
-		return nil, fmt.Errorf(`boltdb.NewBoltStore(%q): %v`, filepath.Join(baseDir, "stable.dat"), err)
+		return nil, fmt.Errorf(`boltdb.NewBoltStore(%q): %v`, stablePath, err)
 	}
 
 	fileSnapshotStore, err := raft.NewFileSnapshotStore(baseDir, 3, os.Stderr)
@@ -47,7 +50,6 @@ func SetupRaft(cfg *RaftConfig, bootstrapEnabled bool) (*raft.Raft, error) {
 	}
 
 	rs := &ReminderService{}
-
 	r, err := raft.NewRaft(
 		raftConfig,
 		rs,
@@ -61,7 +63,7 @@ func SetupRaft(cfg *RaftConfig, bootstrapEnabled bool) (*raft.Raft, error) {
 		return nil, fmt.Errorf("raft.NewRaft: %v", err)
 	}
 
-	if bootstrapEnabled {
+	if cfg.Bootstrap {
 		cfg := raft.Configuration{
 			Servers: []raft.Server{
 				{
@@ -78,5 +80,6 @@ func SetupRaft(cfg *RaftConfig, bootstrapEnabled bool) (*raft.Raft, error) {
 		}
 	}
 
+	r.AddVoter(raft.ServerID(cfg.NodeIdentifier), raft.ServerAddress(fmt.Sprintf("%s:%d", cfg.BindAddr, cfg.BindPort)), 0, time.Second*3)
 	return r, nil
 }

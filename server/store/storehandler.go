@@ -14,7 +14,7 @@ import (
 func New(httpConfig config.HttpConfig, r *raft.Raft) {
 	GRPC_PORT := httpConfig.BindPort + 10
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", httpConfig.BindAddr, GRPC_PORT))
-	fmt.Printf("Running grpc server on port %d", GRPC_PORT)
+	fmt.Printf("Running grpc server on port %d\n", GRPC_PORT)
 
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)

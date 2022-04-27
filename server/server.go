@@ -20,6 +20,6 @@ func InitializeServer(httpConfig *config.HttpConfig, raft *raft.Raft) {
 	http.HandleFunc("/raft/stats", raftHandler.Stats)
 
 	httpServerConfig := fmt.Sprintf("%s:%d", httpConfig.BindAddr, httpConfig.BindPort)
-	log.Printf("We are going to start the HTTP server on %s\n", httpServerConfig)
+	log.Printf("Raft HTTP Server Running On: %s\n", httpServerConfig)
 	http.ListenAndServe(httpServerConfig, nil)
 }

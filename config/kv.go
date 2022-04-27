@@ -67,18 +67,19 @@ func (r *FSM) Apply(l *raft.Log) interface{} {
 	return nil
 }
 
+// Snapshot is not implemented. The idea is that on fixed intervals, RAFT will create snapshots of your store to reload if a node were to go offline
 func (r *FSM) Snapshot() (raft.FSMSnapshot, error) {
 	fmt.Println("Snapshot Ignore")
 	return nil, nil
 }
 
+// Restore is not implemented. The idea will restore from a *raft.FSMSnapshot when loaded from disk/external storage if a node got knocked offline
 func (r *FSM) Restore(s io.ReadCloser) error {
 	fmt.Println("Restore Ignore")
 	return nil
 }
 
 func (e *RpcInterface) AddEntry(_ context.Context, req *proto.AddEntryRequest) (*proto.KeyResponse, error) {
-	log.Println("Called")
 	cmd := &RaftCommand{
 		Operation: ADD_KEY,
 		Value: Entry{
@@ -87,16 +88,11 @@ func (e *RpcInterface) AddEntry(_ context.Context, req *proto.AddEntryRequest) (
 		},
 	}
 
-	log.Println("Command")
-	log.Println(cmd)
-
 	serializedData, err := json.Marshal(cmd)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Currently calling raft!")
-	log.Println(req)
 	res := e.Raft.Apply(serializedData, time.Second)
 	if e := res.Error(); e != nil {
 		log.Fatal(e)

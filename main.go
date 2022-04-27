@@ -29,15 +29,11 @@ func main() {
 		BindPort:        *raftBindPort,
 	}
 
-	log.Printf("Raft Configuration: %v\n", raftConfiguration)
-
 	httpConfiguration := &config.HttpConfig{
 		BindAddr:       *serviceBindAddr,
 		BindPort:       *serviceBindPort,
 		NodeIdentifier: *nodeIdentifier,
 	}
-
-	log.Printf("HTTP Configuration: %v\n", httpConfiguration)
 
 	raft, err := config.SetupRaft(raftConfiguration)
 	if err != nil {

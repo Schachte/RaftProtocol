@@ -36,8 +36,12 @@ func New(httpConfig *config.HttpConfig, r *raft.Raft) *server {
 
 func (s *server) JoinCluster(w http.ResponseWriter, r *http.Request) {
 	if s.Raft.State() != raft.Leader {
-		fmt.Fprintf(w, "Must be leader\n")
-		return
+		handleRequest(w, r, func() ([]byte, error) {
+			payload := &response{
+				Message: "Error, you must be a leader to invoke a Join command",
+			}
+			return json.MarshalIndent(payload, "", "   ")
+		})
 	}
 
 	headerContentType := r.Header.Get("Content-Type")
@@ -46,8 +50,6 @@ func (s *server) JoinCluster(w http.ResponseWriter, r *http.Request) {
 	}
 	var incomingPayload request
 	json.NewDecoder(r.Body).Decode(&incomingPayload)
-	fmt.Println(incomingPayload)
-	fmt.Println(incomingPayload.FullAddress)
 	f := s.Raft.AddVoter(raft.ServerID(incomingPayload.NodeIdentifier), raft.ServerAddress(incomingPayload.FullAddress), 0, time.Second)
 	if e := f.Error(); e != nil {
 		log.Fatal(e)
@@ -58,14 +60,18 @@ func (s *server) JoinCluster(w http.ResponseWriter, r *http.Request) {
 		payload := &response{
 			Message: fmt.Sprintf("Added new node to %s - %s @ %s.", s.Identifier, incomingPayload.NodeIdentifier, incomingPayload.FullAddress),
 		}
-		return json.Marshal(payload)
+		return json.MarshalIndent(payload, "", "   ")
 	})
 }
 
 func (s *server) RemoveFromCluster(w http.ResponseWriter, r *http.Request) {
 	if s.Raft.State() != raft.Leader {
-		fmt.Fprintf(w, "Must be leader\n")
-		return
+		handleRequest(w, r, func() ([]byte, error) {
+			payload := &response{
+				Message: "Error, you must be a leader to invoke a Join command",
+			}
+			return json.MarshalIndent(payload, "", "   ")
+		})
 	}
 
 	headerContentType := r.Header.Get("Content-Type")
@@ -75,7 +81,6 @@ func (s *server) RemoveFromCluster(w http.ResponseWriter, r *http.Request) {
 
 	var incomingPayload request
 	json.NewDecoder(r.Body).Decode(&incomingPayload)
-	fmt.Println(incomingPayload)
 	f := s.Raft.RemoveServer(raft.ServerID(incomingPayload.NodeIdentifier), 0, time.Second)
 	if e := f.Error(); e != nil {
 		log.Fatal(e)
@@ -86,13 +91,13 @@ func (s *server) RemoveFromCluster(w http.ResponseWriter, r *http.Request) {
 		payload := &response{
 			Message: fmt.Sprintf("%s removed.\n", incomingPayload.NodeIdentifier),
 		}
-		return json.Marshal(payload)
+		return json.MarshalIndent(payload, "", "   ")
 	})
 }
 
 func (s *server) Stats(w http.ResponseWriter, r *http.Request) {
 	handleRequest(w, r, func() ([]byte, error) {
-		return json.Marshal(s.Raft.Stats())
+		return json.MarshalIndent(s.Raft.Stats(), "", "   ")
 	})
 }
 
